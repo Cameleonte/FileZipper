@@ -2,6 +2,14 @@ import os
 import zipfile
 
 
+def get_file_sizes(path):
+        # Get the compressed size using zipfile
+    with zipfile.ZipFile(path, 'r') as zip_file:
+        new_compressed_size = sum(entry.compress_size for entry in zip_file.infolist() if not entry.is_dir())
+
+    return new_compressed_size
+
+
 def delete_old_zip(zip_name):
     """
     Delete the zip file if it already exists.
@@ -47,7 +55,12 @@ def zip_current_level(exclude_list, zip_name="output.zip"):
 
 if __name__ == "__main__":
     # List of folders and files to be excluded
-    exclude_list = ["venv", ".idea", "templates"]
+    exclude_list = ["venv", ".idea", "templates", "file_zipper.py", "populate_db.py"]
 
     zip_current_level(exclude_list)
-    print(f"Files and folders zipped into 'output.zip' excluding {exclude_list}")
+
+    file_path = 'output.zip'
+    compressed_size = get_file_sizes(file_path)
+
+    print(f"Files and folders zipped into 'output.zip' excluding {exclude_list}\n")
+    print(f'Compressed File Size: {compressed_size} bytes')
